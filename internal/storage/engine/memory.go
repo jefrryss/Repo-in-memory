@@ -14,7 +14,7 @@ type Memory struct {
 }
 func NewMemory() *Memory{
 	return &Memory{
-		memory: make(map[string]string)
+		memory: make(map[string]string),
 	}
 }
 func (m *Memory) Get(key string) (string, error){

@@ -12,7 +12,7 @@ type InMemory struct {
 	memory *engine.Memory
 }
 
-func NewStorage(m *enigne.Memory) Storage{
+func NewStorage(m *engine.Memory) Storage{
 	return &InMemory{
 		memory: m,
 	}
@@ -23,7 +23,7 @@ func (i *InMemory) Set(key, value string) error{
 	return err
 }
 
-func (i *InMemory) Get(key strign) (string, error) {
+func (i *InMemory) Get(key string) (string, error) {
 	value, err := i.memory.Get(key)
 	if err != nil {
 		return "", err

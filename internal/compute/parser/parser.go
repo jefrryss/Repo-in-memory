@@ -49,14 +49,14 @@ func (l *LineParser) Parse(val string) (*Query, error) {
 			Key: command[1],
 			Value: command[2],
 		}
-		return qeury, nil
+		return query, nil
 	case "GET", "DEL":
 		if len(command) != 2 {
 			return nil, ErrNotEnoughArgs
 		}
 
 		query := &Query{
-			Computeommand: cmd,
+			Command: cmd,
 			Key: command[1],
 		}
 		return query, nil
