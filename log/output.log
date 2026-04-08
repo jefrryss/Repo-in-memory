@@ -1,0 +1,24 @@
+2026-04-08T15:30:13.784+0300	INFO	cmd/main.go:24	start init logs
+2026-04-08T15:30:13.784+0300	INFO	cmd/main.go:32	start init db
+2026-04-08T15:30:29.258+0300	WARN	compute/compute.go:31	Invalid query syntax	{"error": "not enought arguments", "query": "SET 123123131"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:31
+main.main
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/cmd/main.go:52
+runtime.main
+	/usr/local/go/src/runtime/proc.go:285
+2026-04-08T15:30:33.995+0300	WARN	compute/compute.go:31	Invalid query syntax	{"error": "invalid command", "query": "vidfjfkd"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:31
+main.main
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/cmd/main.go:52
+runtime.main
+	/usr/local/go/src/runtime/proc.go:285
+2026-04-08T15:30:34.766+0300	WARN	compute/compute.go:31	Invalid query syntax	{"error": "invalid command", "query": "dsfdsfsd"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:31
+main.main
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/cmd/main.go:52
+runtime.main
+	/usr/local/go/src/runtime/proc.go:285
+2026-04-08T15:30:51.303+0300	INFO	cmd/main.go:48	end of work db

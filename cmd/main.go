@@ -6,30 +6,19 @@ import (
 	"os"
 	"strings"
 
-	"go.uber.org/zap"
-
 	"in-memory/internal/compute"
 	"in-memory/internal/compute/parser"
 	"in-memory/internal/storage"
 	"in-memory/internal/storage/engine"
+	"in-memory/config"
+	"in-memory/internal/logger"
 )
 
-func InitLogger() *zap.Logger {
-	config := zap.NewDevelopmentConfig()
 
-	config.OutputPaths = []string{"db.log"}
-	config.ErrorOutputPaths = []string{"db.log"}
-
-	logger, err := config.Build()
-	if err != nil {
-		panic(err)
-	}
-
-	return logger
-}
 
 func main() {
-	logger := InitLogger()
+	cnf := config.LoadConfig()
+	logger := logger.NewLogger(cnf)
 	defer logger.Sync()
 	
 	logger.Info("start init logs")
