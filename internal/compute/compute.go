@@ -11,54 +11,52 @@ import (
 
 type Compute struct {
 	parser  parser.Parser
-	storage storage.Storage
-	logger  *zap.Logger 
+	logger *zap.Logger
+	storageInMemory storage.Storage
 }
 
 func NewCompute(p parser.Parser, s storage.Storage, l *zap.Logger) *Compute {
 	return &Compute{
 		parser:  p,
-		storage: s,
 		logger:  l,
+		storageInMemory: s,
 	}
 }
 
-func (c *Compute) HandleQuery(queryStr string) (string, error) {
-	c.logger.Debug("start parsing", zap.String("query", queryStr))
-	
+func (c *Compute) HandleQuery(queryStr string) (string, error) {	
 	query, err := c.parser.Parse(queryStr)
 	if err != nil {
-		c.logger.Warn("Invalid query syntax", zap.Error(err), zap.String("query", queryStr))
+		c.logger.Error("failde query", zap.Error(err))
 		return "", err
 	}
 
-	switch query.Command {
-	case "SET":
-		err := c.storage.Set(query.Key, query.Value)
+	switch query.Cmd {
+	case parser.CmdSet:
+		err := c.storageInMemory.Set(query.Key, query.Value)
 		if err != nil {
 			c.logger.Error("failed SET", zap.Error(err), zap.String("key", query.Key))
 			return "", err
 		}
-		return "ok", nil
+		return "succes", nil
 
-	case "GET":
-		value, err := c.storage.Get(query.Key)
+	case parser.CmdGet:
+		value, err := c.storageInMemory.Get(query.Key)
 		if err != nil {
 			c.logger.Info("failed GET (key not found)", zap.Error(err), zap.String("key", query.Key))
 			return "", err
 		}
 		return value, nil
 
-	case "DEL":
-		err := c.storage.Del(query.Key)
+	case parser.CmdDel:
+		err := c.storageInMemory.Del(query.Key)
 		if err != nil {
 			c.logger.Error("failed DEL", zap.Error(err), zap.String("key", query.Key))
 			return "", err
 		}
-		return "ok", nil
+		return "succes", nil
 
 	default:
-		c.logger.Error("unknown command passed parser", zap.String("command", query.Command))
+		c.logger.Error("unknown command passed parser")
 		return "", errors.New("internal error: unknown command")
 	}
 }

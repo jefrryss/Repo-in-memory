@@ -1,6 +1,11 @@
 package storage 
 
-import "in-memory/internal/storage/engine"
+import (
+	"in-memory/internal/storage/engine"
+	"errors"
+)
+
+var ErrNotExists = errors.New("The item not exists")
 
 type Storage interface {
 	Set(key, value string) error 
@@ -8,31 +13,31 @@ type Storage interface {
 	Del(key string) error
 }
 
-type InMemory struct {
-	memory *engine.Memory
+type StorageMemory struct {
+	hashTable engine.Engine
 }
 
-func NewStorage(m *engine.Memory) Storage{
-	return &InMemory{
-		memory: m,
+func NewStorage(hashTable *engine.HashTable) Storage{
+	return &StorageMemory{
+		hashTable: hashTable,
 	}
 }
 
-func (i *InMemory) Set(key, value string) error{
-	err := i.memory.Set(key, value)
-	return err
+func (i *StorageMemory) Set(key, value string) error{
+	i.hashTable.Set(key, value)
+	return nil
 }
 
-func (i *InMemory) Get(key string) (string, error) {
-	value, err := i.memory.Get(key)
-	if err != nil {
-		return "", err
+func (i *StorageMemory) Get(key string) (string, error) {
+	value, flag := i.hashTable.Get(key)
+	if !flag {
+		return "", ErrNotExists
 	}
 	return value, nil
 }
 
 
-func (i *InMemory) Del(key string) error {
-	err := i.memory.Del(key)
-	return err
+func (i *StorageMemory) Del(key string) error {
+	i.hashTable.Del(key)
+	return nil
 }

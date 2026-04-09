@@ -11,11 +11,6 @@ var (
 	ErrEmptyQuery = errors.New("empty query")
 )
 
-type Query struct {
-	Command string
-	Key string 
-	Value string
-}
 
 type Parser interface {
 	Parse(val string) (*Query, error)
@@ -45,18 +40,28 @@ func (l *LineParser) Parse(val string) (*Query, error) {
 		}
 
 		query := &Query{
-			Command: cmd,
+			Cmd: CmdSet,
 			Key: command[1],
 			Value: command[2],
 		}
 		return query, nil
-	case "GET", "DEL":
+	case "GET":
 		if len(command) != 2 {
 			return nil, ErrNotEnoughArgs
 		}
 
 		query := &Query{
-			Command: cmd,
+			Cmd: CmdGet,
+			Key: command[1],
+		}
+		return query, nil
+	case "DEL":
+		if len(command) != 2 {
+			return nil, ErrNotEnoughArgs
+		}
+
+		query := &Query{
+			Cmd: CmdDel,
 			Key: command[1],
 		}
 		return query, nil
