@@ -158,3 +158,38 @@ in-memory/internal/server.(*ServerTCP).handleConnection
 	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:75
 in-memory/internal/server.(*ServerTCP).StartServer.func1
 	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:60
+2026-04-09T13:20:55.721+0300	INFO	cmd/main.go:19	init logs
+2026-04-09T13:20:55.722+0300	INFO	cmd/main.go:27	init db
+2026-04-09T13:20:55.722+0300	INFO	server/serverTCP.go:45	TCP server started	{"address": "127.0.0.1:3223"}
+2026-04-11T15:52:26.482+0300	INFO	cmd/main.go:19	init logs
+2026-04-11T15:52:26.482+0300	INFO	cmd/main.go:27	init db
+2026-04-11T15:52:26.482+0300	INFO	server/serverTCP.go:51	TCP server started	{"address": "127.0.0.1:3223"}
+2026-04-11T15:53:53.278+0300	ERROR	compute/compute.go:38	failde query	{"error": "invalid command", "ip": "127.0.0.1:56040"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:38
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:91
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:66
+2026-04-11T15:53:55.961+0300	ERROR	compute/compute.go:38	failde query	{"error": "invalid command", "ip": "127.0.0.1:56040"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:38
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:91
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:66
+2026-04-11T15:54:45.972+0300	ERROR	compute/compute.go:38	failde query	{"error": "invalid command", "ip": "127.0.0.1:56040"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:38
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:91
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:66
+2026-04-11T15:55:14.457+0300	ERROR	compute/compute.go:38	failde query	{"error": "invalid command", "ip": "127.0.0.1:56103"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:38
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:91
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:66
+2026-04-11T15:55:48.629+0300	INFO	compute/compute.go:54	failed GET (key not found)	{"error": "The item not exists", "key": "123", "ip": "127.0.0.1:56040"}

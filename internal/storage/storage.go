@@ -3,14 +3,15 @@ package storage
 import (
 	"in-memory/internal/storage/engine"
 	"errors"
+	"context"
 )
 
 var ErrNotExists = errors.New("The item not exists")
 
 type Storage interface {
-	Set(key, value string) error 
-	Get(key string) (string, error) 
-	Del(key string) error
+	Set(ctx context.Context, key, value string) error 
+	Get(ctx context.Context, key string) (string, error) 
+	Del(ctx context.Context, key string) error
 }
 
 type StorageMemory struct {
@@ -23,12 +24,18 @@ func NewStorage(hashTable *engine.HashTable) Storage{
 	}
 }
 
-func (i *StorageMemory) Set(key, value string) error{
+func (i *StorageMemory) Set(ctx context.Context, key, value string) error{
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	i.hashTable.Set(key, value)
 	return nil
 }
 
-func (i *StorageMemory) Get(key string) (string, error) {
+func (i *StorageMemory) Get(ctx context.Context, key string) (string, error) {
+	if err := ctx.Err(); err != nil {
+		return "", err
+	}
 	value, flag := i.hashTable.Get(key)
 	if !flag {
 		return "", ErrNotExists
@@ -37,7 +44,10 @@ func (i *StorageMemory) Get(key string) (string, error) {
 }
 
 
-func (i *StorageMemory) Del(key string) error {
+func (i *StorageMemory) Del(ctx context.Context, key string) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	i.hashTable.Del(key)
 	return nil
 }

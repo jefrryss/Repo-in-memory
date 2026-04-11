@@ -3,6 +3,7 @@ package parser
 import (
 	"strings"
 	"errors"
+	"context"
 )
 
 var (
@@ -13,7 +14,7 @@ var (
 
 
 type Parser interface {
-	Parse(val string) (*Query, error)
+	Parse(ctx context.Context, val string) (*Query, error)
 }
 
 type LineParser struct {}
@@ -24,7 +25,12 @@ func NewLineParser() Parser {
 }
 
 
-func (l *LineParser) Parse(val string) (*Query, error) {
+func (l *LineParser) Parse(ctx context.Context, val string) (*Query, error) {
+
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
 	command := strings.Fields(val)
 
 	if len(command) == 0 {

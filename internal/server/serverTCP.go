@@ -9,8 +9,10 @@ import(
 	"unicode"
 	"strconv"
 	"strings"
+	"context"
 	"in-memory/internal/compute"
 	"in-memory/config"
+	"time"
 )
 
 type ServerTCP struct {
@@ -20,7 +22,10 @@ type ServerTCP struct {
 	maxConnections int
 	maxMessageSize int
 	addres string
+	timeout time.Duration
 }
+
+
 
 func NewServerTSP(cnf *config.ServerConfig, c *compute.Compute, l *zap.Logger) *ServerTCP{
 	maxMessage, err := parseMaxSize(cnf.MaxMessageSize)
@@ -33,6 +38,7 @@ func NewServerTSP(cnf *config.ServerConfig, c *compute.Compute, l *zap.Logger) *
 		addres: cnf.Address,
 		com: c,
 		logger: l,
+		timeout: cnf.IdleTimeout,
 	}
 }
 
@@ -57,22 +63,35 @@ func (s *ServerTCP) StartServer(){
 			defer func (){
 				<- semaphore
 			}()
-			s.handleConnection(c)
+			s.handleConnection(context.Background(), c)
 
 		}(conn)
 	}
 }
 
 
-func (s *ServerTCP) handleConnection(conn net.Conn) {
+func (s *ServerTCP) handleConnection(ctx context.Context, conn net.Conn) {
 	defer conn.Close()
+
 	scanner := bufio.NewScanner(conn)
 	initialBuf := make([]byte, 1024)
-
 	scanner.Buffer(initialBuf, s.maxMessageSize)
-	for scanner.Scan() {
+
+	ctxVal := context.WithValue(ctx, compute.ClientIpKey, conn.RemoteAddr().String())
+
+	for {
+		conn.SetReadDeadline(time.Now().Add(s.timeout))
+		if !scanner.Scan(){
+			break
+		}
+
+		ctxTime, cancel := context.WithTimeout(ctxVal, time.Second * 2)
+
 		line := scanner.Text()
-		ans, err := s.com.HandleQuery(line)
+		ans, err := s.com.HandleQuery(ctxTime, line)
+
+		cancel()
+
 		if err != nil {
 			str := "Error: " + err.Error() + "\n"
 			conn.Write([]byte(str))
