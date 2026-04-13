@@ -18,7 +18,7 @@ type StorageMemory struct {
 	hashTable engine.Engine
 }
 
-func NewStorage(hashTable *engine.HashTable) Storage{
+func NewStorage(hashTable engine.Engine) Storage{
 	return &StorageMemory{
 		hashTable: hashTable,
 	}

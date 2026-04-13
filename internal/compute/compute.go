@@ -46,7 +46,7 @@ func (c *Compute) HandleQuery(ctx context.Context, queryStr string) (string, err
 			c.logger.Error("failed SET", zap.Error(err), zap.String("key", query.Key), zap.String("ip", ip))
 			return "", err
 		}
-		return "succes", nil
+		return "success", nil
 
 	case parser.CmdGet:
 		value, err := c.storageInMemory.Get(ctx, query.Key)
@@ -62,7 +62,7 @@ func (c *Compute) HandleQuery(ctx context.Context, queryStr string) (string, err
 			c.logger.Error("failed DEL", zap.Error(err), zap.String("key", query.Key), zap.String("ip", ip))
 			return "", err
 		}
-		return "succes", nil
+		return "success", nil
 
 	default:
 		c.logger.Error("unknown command passed parser", zap.String("ip", ip))
