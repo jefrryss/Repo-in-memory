@@ -6,9 +6,6 @@ import(
 	"net"
 	"go.uber.org/zap"
 	"bufio"
-	"unicode"
-	"strconv"
-	"strings"
 	"context"
 	"in-memory/internal/compute"
 	"in-memory/config"
@@ -28,7 +25,7 @@ type ServerTCP struct {
 
 
 func NewServerTSP(cnf *config.ServerConfig, c *compute.Compute, l *zap.Logger) *ServerTCP{
-	maxMessage, err := parseMaxSize(cnf.MaxMessageSize)
+	maxMessage, err := config.PasreSize(cnf.MaxMessageSize)
 	if err != nil {
 		l.Fatal("Invalid max message size in config", zap.Error(err))
 	}
@@ -61,6 +58,12 @@ func (s *ServerTCP) StartServer(){
 
 		go func(c net.Conn) {
 			defer func (){
+				if r := recover(); r != nil {
+					s.logger.Error("Recovered from panic in client goroutine", 
+                        zap.Any("panic_info", r),
+                        zap.String("client_ip", c.RemoteAddr().String()),
+                    )
+				}
 				<- semaphore
 			}()
 			s.handleConnection(context.Background(), c)
@@ -114,37 +117,3 @@ func (s *ServerTCP) handleConnection(ctx context.Context, conn net.Conn) {
 
 
 
-func parseMaxSize(sizeConf string) (int, error) {
-	var size string
-	var bytes string
-	sizeConf = strings.TrimSpace(sizeConf)
-	for _, val := range sizeConf {
-		if unicode.IsDigit(val) {
-			size += string(val)
-		} else {
-			bytes += string(val)
-		}
-	}
-
-	if size == "" {
-		return 0, errors.New("size empty")
-	}
-
-	sizeInt, err := strconv.Atoi(size)
-	if err != nil {
-		return 0, err
-	}
-	bytes = strings.TrimSpace(strings.ToUpper(bytes))
-	switch bytes {
-	case "", "Б", "B", "BYTE", "BYTES":
-		return sizeInt, nil
-	case "КБ", "KB", "K":
-		return sizeInt * 1024, nil
-	case "МБ", "MB", "M":
-		return sizeInt * 1024 * 1024, nil
-	case "ГБ", "GB", "G":
-		return sizeInt * 1024 * 1024 * 1024, nil
-	default:
-		return 0, errors.New("Unknown format: " + bytes)
-	}
-}

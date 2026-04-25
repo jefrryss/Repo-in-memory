@@ -1,0 +1,159 @@
+2026-04-24T19:45:20.873+0300	INFO	server/main.go:21	init logs
+2026-04-24T19:45:20.873+0300	INFO	server/main.go:24	init parser
+2026-04-24T19:45:20.873+0300	INFO	server/main.go:27	init hashTable
+2026-04-24T19:45:20.873+0300	INFO	server/main.go:30	init storage
+2026-04-24T19:45:20.873+0300	INFO	server/main.go:38	init WAL
+2026-04-24T19:45:20.873+0300	INFO	server/main.go:41	start recover Database from WAL
+2026-04-24T19:45:20.873+0300	INFO	server/main.go:51	finish recover Database from WAL
+2026-04-24T19:45:20.873+0300	INFO	server/main.go:56	init db
+2026-04-24T19:45:20.874+0300	INFO	server/serverTCP.go:48	TCP server started	{"address": "127.0.0.1:3223"}
+2026-04-24T19:45:29.186+0300	ERROR	server/serverTCP.go:62	Recovered from panic in client goroutine	{"panic_info": "runtime error: invalid memory address or nil pointer dereference", "client_ip": "127.0.0.1:55943"}
+in-memory/internal/server.(*ServerTCP).StartServer.func1.1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:62
+runtime.gopanic
+	/usr/local/go/src/runtime/panic.go:783
+runtime.panicmem
+	/usr/local/go/src/runtime/panic.go:262
+runtime.sigpanic
+	/usr/local/go/src/runtime/signal_unix.go:925
+in-memory/internal/wal.(*Wal).Write
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/wal/wal.go:104
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:47
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:94
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:69
+2026-04-24T19:46:44.346+0300	ERROR	compute/compute.go:41	failde query	{"error": "not enought arguments", "ip": "127.0.0.1:55963"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:41
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:94
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:69
+2026-04-24T19:46:49.385+0300	ERROR	server/serverTCP.go:62	Recovered from panic in client goroutine	{"panic_info": "runtime error: invalid memory address or nil pointer dereference", "client_ip": "127.0.0.1:55963"}
+in-memory/internal/server.(*ServerTCP).StartServer.func1.1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:62
+runtime.gopanic
+	/usr/local/go/src/runtime/panic.go:783
+runtime.panicmem
+	/usr/local/go/src/runtime/panic.go:262
+runtime.sigpanic
+	/usr/local/go/src/runtime/signal_unix.go:925
+in-memory/internal/wal.(*Wal).Write
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/wal/wal.go:104
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:47
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:94
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:69
+2026-04-24T19:54:23.564+0300	INFO	server/main.go:21	init logs
+2026-04-24T19:54:23.564+0300	INFO	server/main.go:24	init parser
+2026-04-24T19:54:23.564+0300	INFO	server/main.go:27	init hashTable
+2026-04-24T19:54:23.564+0300	INFO	server/main.go:30	init storage
+2026-04-24T19:54:23.565+0300	INFO	server/main.go:38	init WAL
+2026-04-24T19:54:23.565+0300	INFO	server/main.go:41	start recover Database from WAL
+2026-04-24T19:54:23.565+0300	INFO	server/main.go:51	finish recover Database from WAL
+2026-04-24T19:54:23.565+0300	INFO	server/main.go:56	init db
+2026-04-24T19:54:23.565+0300	INFO	server/serverTCP.go:48	TCP server started	{"address": "127.0.0.1:3223"}
+2026-04-24T19:55:47.804+0300	ERROR	compute/compute.go:41	failde query	{"error": "not enought arguments", "ip": "127.0.0.1:56126"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:41
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:94
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:69
+2026-04-24T19:55:50.877+0300	ERROR	compute/compute.go:41	failde query	{"error": "invalid command", "ip": "127.0.0.1:56126"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:41
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:94
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:69
+2026-04-24T21:38:31.895+0300	ERROR	server/serverTCP.go:113	Error reading conecction	{"error": "read tcp 127.0.0.1:3223->127.0.0.1:56126: i/o timeout"}
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:113
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:69
+2026-04-25T11:38:38.480+0300	INFO	server/main.go:21	init logs
+2026-04-25T11:38:38.480+0300	INFO	server/main.go:24	init parser
+2026-04-25T11:38:38.480+0300	INFO	server/main.go:27	init hashTable
+2026-04-25T11:38:38.480+0300	INFO	server/main.go:30	init storage
+2026-04-25T11:38:38.480+0300	INFO	server/main.go:38	init WAL
+2026-04-25T11:38:38.480+0300	INFO	server/main.go:41	start recover Database from WAL
+2026-04-25T11:38:38.480+0300	INFO	server/main.go:51	finish recover Database from WAL
+2026-04-25T11:38:38.480+0300	INFO	server/main.go:56	init db
+2026-04-25T11:38:38.481+0300	INFO	server/serverTCP.go:48	TCP server started	{"address": "127.0.0.1:3223"}
+2026-04-25T11:44:05.815+0300	ERROR	server/serverTCP.go:113	Error reading conecction	{"error": "read tcp 127.0.0.1:3223->127.0.0.1:62238: i/o timeout"}
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:113
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:69
+2026-04-25T11:54:09.636+0300	INFO	server/main.go:21	init logs
+2026-04-25T11:54:09.636+0300	INFO	server/main.go:24	init parser
+2026-04-25T11:54:09.636+0300	INFO	server/main.go:27	init hashTable
+2026-04-25T11:54:09.636+0300	INFO	server/main.go:30	init storage
+2026-04-25T11:54:09.636+0300	INFO	server/main.go:38	init WAL
+2026-04-25T11:54:09.636+0300	INFO	server/main.go:41	start recover Database from WAL
+2026-04-25T11:54:09.636+0300	INFO	wal/wal.go:70	Start recovery
+2026-04-25T11:54:09.636+0300	INFO	server/main.go:51	finish recover Database from WAL
+2026-04-25T11:54:09.636+0300	INFO	server/main.go:56	init db
+2026-04-25T11:54:09.637+0300	INFO	server/serverTCP.go:48	TCP server started	{"address": "127.0.0.1:3223"}
+2026-04-25T11:56:53.295+0300	INFO	server/main.go:21	init logs
+2026-04-25T11:56:53.295+0300	INFO	server/main.go:24	init parser
+2026-04-25T11:56:53.295+0300	INFO	server/main.go:27	init hashTable
+2026-04-25T11:56:53.295+0300	INFO	server/main.go:30	init storage
+2026-04-25T11:56:53.295+0300	INFO	server/main.go:58	init db
+2026-04-25T11:56:53.295+0300	INFO	server/serverTCP.go:48	TCP server started	{"address": "127.0.0.1:3223"}
+2026-04-25T11:57:02.732+0300	INFO	wal/wal.go:124	Start write to WAL by time
+2026-04-25T11:57:02.732+0300	INFO	wal/wal.go:142	Start flushing
+2026-04-25T11:57:26.754+0300	ERROR	compute/compute.go:41	failde query	{"error": "not enought arguments", "ip": "127.0.0.1:62918"}
+in-memory/internal/compute.(*Compute).HandleQuery
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/compute/compute.go:41
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:94
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:69
+2026-04-25T11:57:30.896+0300	INFO	wal/wal.go:124	Start write to WAL by time
+2026-04-25T11:57:30.896+0300	INFO	wal/wal.go:142	Start flushing
+2026-04-25T11:57:38.864+0300	INFO	wal/wal.go:124	Start write to WAL by time
+2026-04-25T11:57:38.864+0300	INFO	wal/wal.go:142	Start flushing
+2026-04-25T12:02:38.871+0300	ERROR	server/serverTCP.go:113	Error reading conecction	{"error": "read tcp 127.0.0.1:3223->127.0.0.1:62918: i/o timeout"}
+in-memory/internal/server.(*ServerTCP).handleConnection
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:113
+in-memory/internal/server.(*ServerTCP).StartServer.func1
+	/Users/pokofon/Downloads/memory-repo/Repo-in-memory/internal/server/serverTCP.go:69
+2026-04-25T12:35:44.406+0300	INFO	server/main.go:25	init logs
+2026-04-25T12:35:44.406+0300	INFO	server/main.go:28	init parser
+2026-04-25T12:35:44.406+0300	INFO	server/main.go:31	init hashTable
+2026-04-25T12:35:44.406+0300	INFO	server/main.go:34	init storage
+2026-04-25T12:35:44.407+0300	INFO	wal/wal.go:238	Opened WAL segment	{"component": "wal", "file": "wal_0001.log", "current_size": 42}
+2026-04-25T12:35:44.407+0300	INFO	wal/wal.go:73	WAL successfully initialized	{"component": "wal", "directory": "./data/wal", "max_segment_size": 10485760, "batch_size": 3}
+2026-04-25T12:35:44.407+0300	INFO	wal/wal.go:85	Started data recovery from WAL	{"component": "wal", "directory": "./data/wal"}
+2026-04-25T12:35:44.407+0300	INFO	wal/wal.go:103	Found files for recovery	{"component": "wal", "files_count": 1}
+2026-04-25T12:35:44.407+0300	INFO	wal/wal.go:129	Recovery successfully completed	{"component": "wal", "total_queries_loaded": 3}
+2026-04-25T12:35:44.407+0300	INFO	server/main.go:64	init db
+2026-04-25T12:35:44.407+0300	INFO	server/serverTCP.go:48	TCP server started	{"address": "127.0.0.1:3223"}
+2026-04-25T12:36:29.829+0300	INFO	server/main.go:25	init logs
+2026-04-25T12:36:29.830+0300	INFO	server/main.go:28	init parser
+2026-04-25T12:36:29.830+0300	INFO	server/main.go:31	init hashTable
+2026-04-25T12:36:29.830+0300	INFO	server/main.go:34	init storage
+2026-04-25T12:36:29.830+0300	INFO	wal/wal.go:238	Opened WAL segment	{"component": "wal", "file": "wal_0001.log", "current_size": 75}
+2026-04-25T12:36:29.830+0300	INFO	wal/wal.go:73	WAL successfully initialized	{"component": "wal", "directory": "./data/wal", "max_segment_size": 10485760, "batch_size": 3}
+2026-04-25T12:36:29.830+0300	INFO	wal/wal.go:85	Started data recovery from WAL	{"component": "wal", "directory": "./data/wal"}
+2026-04-25T12:36:29.830+0300	INFO	wal/wal.go:103	Found files for recovery	{"component": "wal", "files_count": 1}
+2026-04-25T12:36:29.830+0300	INFO	wal/wal.go:129	Recovery successfully completed	{"component": "wal", "total_queries_loaded": 5}
+2026-04-25T12:36:29.830+0300	INFO	server/main.go:64	init db
+2026-04-25T12:36:29.831+0300	INFO	server/serverTCP.go:48	TCP server started	{"address": "127.0.0.1:3223"}
+2026-04-25T14:17:51.482+0300	INFO	server/main.go:25	init logs
+2026-04-25T14:17:51.483+0300	INFO	server/main.go:28	init parser
+2026-04-25T14:17:51.483+0300	INFO	server/main.go:31	init hashTable
+2026-04-25T14:17:51.483+0300	INFO	server/main.go:34	init storage
+2026-04-25T14:17:51.483+0300	INFO	wal/wal.go:244	Opened WAL segment	{"component": "wal", "file": "wal_0001.log", "current_size": 75}
+2026-04-25T14:17:51.483+0300	INFO	wal/wal.go:79	WAL successfully initialized	{"component": "wal", "directory": "./data/wal", "max_segment_size": 10485760, "batch_size": 3}
+2026-04-25T14:17:51.483+0300	INFO	wal/wal.go:91	Started data recovery from WAL	{"component": "wal", "directory": "./data/wal"}
+2026-04-25T14:17:51.483+0300	INFO	wal/wal.go:109	Found files for recovery	{"component": "wal", "files_count": 1}
+2026-04-25T14:17:51.483+0300	INFO	wal/wal.go:135	Recovery successfully completed	{"component": "wal", "total_queries_loaded": 5}
+2026-04-25T14:17:51.483+0300	INFO	server/main.go:64	init db
+2026-04-25T14:17:51.483+0300	INFO	server/serverTCP.go:48	TCP server started	{"address": "127.0.0.1:3223"}

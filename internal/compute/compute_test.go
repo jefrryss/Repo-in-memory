@@ -13,6 +13,20 @@ import (
 	"in-memory/internal/compute/parser"
 )
 
+type MockWAL struct {
+	mock.Mock
+}
+
+func (m *MockWAL) Write(ctx context.Context, query *parser.Query) error {
+	args := m.Called(ctx, query)
+	return args.Error(0)
+}
+
+func (m *MockWAL) Recovery(outChan chan<- *parser.Query) error {
+	args := m.Called(outChan)
+	return args.Error(0)
+}
+
 type MockParser struct {
 	mock.Mock
 }
@@ -46,18 +60,19 @@ func TestComputeHandleQuery(t *testing.T) {
 	logger := zap.NewNop()
 	errParse := errors.New("parse error mock")
 	errStorage := errors.New("storage error mock")
+	errWAL := errors.New("wal error mock")
 
 	testCases := []struct {
 		name        string
 		queryStr    string
-		setupMocks  func(mParser *MockParser, mStorage *MockStorage)
+		setupMocks  func(mp *MockParser, ms *MockStorage, mw *MockWAL)
 		expectedRes string
 		expectedErr error
 	}{
 		{
 			name:     "Parser Error",
 			queryStr: "INVALID QUERY",
-			setupMocks: func(mp *MockParser, ms *MockStorage) {
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
 				mp.On("Parse", mock.Anything, "INVALID QUERY").Return(nil, errParse).Once()
 			},
 			expectedRes: "",
@@ -66,20 +81,36 @@ func TestComputeHandleQuery(t *testing.T) {
 		{
 			name:     "SET Success",
 			queryStr: "SET key1 val1",
-			setupMocks: func(mp *MockParser, ms *MockStorage) {
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
 				query := &parser.Query{Cmd: parser.CmdSet, Key: "key1", Value: "val1"}
 				mp.On("Parse", mock.Anything, "SET key1 val1").Return(query, nil).Once()
+				
+				mw.On("Write", mock.Anything, query).Return(nil).Once()
 				ms.On("Set", mock.Anything, "key1", "val1").Return(nil).Once()
 			},
 			expectedRes: "success",
 			expectedErr: nil,
 		},
 		{
-			name:     "SET Storage Error",
+			name:     "SET WAL Error",
 			queryStr: "SET key1 val1",
-			setupMocks: func(mp *MockParser, ms *MockStorage) {
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
 				query := &parser.Query{Cmd: parser.CmdSet, Key: "key1", Value: "val1"}
 				mp.On("Parse", mock.Anything, "SET key1 val1").Return(query, nil).Once()
+				
+				mw.On("Write", mock.Anything, query).Return(errWAL).Once()
+			},
+			expectedRes: "",
+			expectedErr: errWAL,
+		},
+		{
+			name:     "SET Storage Error",
+			queryStr: "SET key1 val1",
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
+				query := &parser.Query{Cmd: parser.CmdSet, Key: "key1", Value: "val1"}
+				mp.On("Parse", mock.Anything, "SET key1 val1").Return(query, nil).Once()
+				
+				mw.On("Write", mock.Anything, query).Return(nil).Once()
 				ms.On("Set", mock.Anything, "key1", "val1").Return(errStorage).Once()
 			},
 			expectedRes: "",
@@ -88,9 +119,10 @@ func TestComputeHandleQuery(t *testing.T) {
 		{
 			name:     "GET Success",
 			queryStr: "GET key1",
-			setupMocks: func(mp *MockParser, ms *MockStorage) {
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
 				query := &parser.Query{Cmd: parser.CmdGet, Key: "key1"}
 				mp.On("Parse", mock.Anything, "GET key1").Return(query, nil).Once()
+				
 				ms.On("Get", mock.Anything, "key1").Return("my_data", nil).Once()
 			},
 			expectedRes: "my_data",
@@ -99,7 +131,7 @@ func TestComputeHandleQuery(t *testing.T) {
 		{
 			name:     "GET Storage Error",
 			queryStr: "GET unknown",
-			setupMocks: func(mp *MockParser, ms *MockStorage) {
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
 				query := &parser.Query{Cmd: parser.CmdGet, Key: "unknown"}
 				mp.On("Parse", mock.Anything, "GET unknown").Return(query, nil).Once()
 				ms.On("Get", mock.Anything, "unknown").Return("", errStorage).Once()
@@ -110,20 +142,36 @@ func TestComputeHandleQuery(t *testing.T) {
 		{
 			name:     "DEL Success",
 			queryStr: "DEL key1",
-			setupMocks: func(mp *MockParser, ms *MockStorage) {
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
 				query := &parser.Query{Cmd: parser.CmdDel, Key: "key1"}
 				mp.On("Parse", mock.Anything, "DEL key1").Return(query, nil).Once()
+				
+				mw.On("Write", mock.Anything, query).Return(nil).Once()
 				ms.On("Del", mock.Anything, "key1").Return(nil).Once()
 			},
 			expectedRes: "success",
 			expectedErr: nil,
 		},
 		{
-			name:     "DEL Storage Error",
+			name:     "DEL WAL Error",
 			queryStr: "DEL key1",
-			setupMocks: func(mp *MockParser, ms *MockStorage) {
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
 				query := &parser.Query{Cmd: parser.CmdDel, Key: "key1"}
 				mp.On("Parse", mock.Anything, "DEL key1").Return(query, nil).Once()
+				
+				mw.On("Write", mock.Anything, query).Return(errWAL).Once()
+			},
+			expectedRes: "",
+			expectedErr: errWAL,
+		},
+		{
+			name:     "DEL Storage Error",
+			queryStr: "DEL key1",
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
+				query := &parser.Query{Cmd: parser.CmdDel, Key: "key1"}
+				mp.On("Parse", mock.Anything, "DEL key1").Return(query, nil).Once()
+				
+				mw.On("Write", mock.Anything, query).Return(nil).Once()
 				ms.On("Del", mock.Anything, "key1").Return(errStorage).Once()
 			},
 			expectedRes: "",
@@ -132,7 +180,7 @@ func TestComputeHandleQuery(t *testing.T) {
 		{
 			name:     "Unknown Command from Parser",
 			queryStr: "MAGIC key1",
-			setupMocks: func(mp *MockParser, ms *MockStorage) {
+			setupMocks: func(mp *MockParser, ms *MockStorage, mw *MockWAL) {
 				query := &parser.Query{Cmd: "999", Key: "key1"}
 				mp.On("Parse", mock.Anything, "MAGIC key1").Return(query, nil).Once()
 			},
@@ -145,10 +193,11 @@ func TestComputeHandleQuery(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockParser := new(MockParser)
 			mockStorage := new(MockStorage)
+			mockWAL := new(MockWAL)
 
-			tt.setupMocks(mockParser, mockStorage)
+			tt.setupMocks(mockParser, mockStorage, mockWAL)
 
-			comp := NewCompute(mockParser, mockStorage, logger)
+			comp := NewCompute(mockParser, mockStorage, logger, mockWAL)
 
 			ctx := context.WithValue(context.Background(), ClientIpKey, "192.168.1.1")
 
@@ -165,6 +214,7 @@ func TestComputeHandleQuery(t *testing.T) {
 
 			mockParser.AssertExpectations(t)
 			mockStorage.AssertExpectations(t)
+			mockWAL.AssertExpectations(t)
 		})
 	}
 }
