@@ -24,20 +24,18 @@ go run cmd/client/main.go --address=127.0.0.1:3223
 ```YAML
 engine:
   type: "in_memory"
-
-wal:
-  flushing_batch_size: 100
-  flushing_batch_timeout: "10ms"
-  max_segment_size: "10MB"
-  data_directory: "/data/wal"
-
 network:
   address: "127.0.0.1:3223"
   max_connections: 100
   max_message_size: "4KB"
-  idle_timeout: "5m"
-
+  idle_timeout: 5m
 logging:
   level: "info"
-  output: "/log/output.log"
+  output: "./log/output.log"
+wal:  
+  turn_on: true
+  flushing_batch_size: 3
+  flushing_batch_timeout: "4ms"
+  max_segment_size: "10MB"
+  data_directory: "./data/wal"
 ```
