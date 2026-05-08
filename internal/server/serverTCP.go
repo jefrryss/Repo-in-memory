@@ -1,30 +1,28 @@
-package server 
+package server
 
-
-import(
-	"errors"
-	"net"
-	"go.uber.org/zap"
+import (
 	"bufio"
 	"context"
-	"in-memory/internal/compute"
+	"errors"
 	"in-memory/config"
+	"in-memory/internal/compute"
+	"net"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type ServerTCP struct {
-	logger *zap.Logger 
-	com *compute.Compute
+	logger *zap.Logger
+	com    *compute.Compute
 
 	maxConnections int
 	maxMessageSize int
-	addres string
-	timeout time.Duration
+	addres         string
+	timeout        time.Duration
 }
 
-
-
-func NewServerTSP(cnf *config.ServerConfig, c *compute.Compute, l *zap.Logger) *ServerTCP{
+func NewServerTSP(cnf *config.ServerConfig, c *compute.Compute, l *zap.Logger) *ServerTCP {
 	maxMessage, err := config.PasreSize(cnf.MaxMessageSize)
 	if err != nil {
 		l.Fatal("Invalid max message size in config", zap.Error(err))
@@ -32,14 +30,14 @@ func NewServerTSP(cnf *config.ServerConfig, c *compute.Compute, l *zap.Logger) *
 	return &ServerTCP{
 		maxMessageSize: maxMessage,
 		maxConnections: cnf.MaxConnections,
-		addres: cnf.Address,
-		com: c,
-		logger: l,
-		timeout: cnf.IdleTimeout,
+		addres:         cnf.Address,
+		com:            c,
+		logger:         l,
+		timeout:        cnf.IdleTimeout,
 	}
 }
 
-func (s *ServerTCP) StartServer(){
+func (s *ServerTCP) StartServer() {
 	listener, err := net.Listen("tcp", s.addres)
 	if err != nil {
 		s.logger.Fatal("Error with starting server", zap.Error(err))
@@ -48,30 +46,35 @@ func (s *ServerTCP) StartServer(){
 	s.logger.Info("TCP server started", zap.String("address", s.addres))
 
 	semaphore := make(chan struct{}, s.maxConnections)
-	
+
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
 			continue
 		}
-		semaphore <- struct{}{}
-
 		go func(c net.Conn) {
-			defer func (){
-				if r := recover(); r != nil {
-					s.logger.Error("Recovered from panic in client goroutine", 
-                        zap.Any("panic_info", r),
-                        zap.String("client_ip", c.RemoteAddr().String()),
-                    )
-				}
-				<- semaphore
-			}()
-			s.handleConnection(context.Background(), c)
 
+			defer func() {
+				if r := recover(); r != nil {
+					s.logger.Error("Recovered from panic in client goroutine",
+						zap.Any("panic_info", r),
+						zap.String("client_ip", c.RemoteAddr().String()),
+					)
+				}
+				<-semaphore
+			}()
+
+			select {
+			case semaphore <- struct{}{}:
+			default:
+				conn.Write([]byte("Too many connections, please wait\n"))
+				semaphore <- struct{}{}
+			}
+			s.handleConnection(context.Background(), c)
 		}(conn)
+
 	}
 }
-
 
 func (s *ServerTCP) handleConnection(ctx context.Context, conn net.Conn) {
 	defer conn.Close()
@@ -84,11 +87,11 @@ func (s *ServerTCP) handleConnection(ctx context.Context, conn net.Conn) {
 
 	for {
 		conn.SetReadDeadline(time.Now().Add(s.timeout))
-		if !scanner.Scan(){
+		if !scanner.Scan() {
 			break
 		}
 
-		ctxTime, cancel := context.WithTimeout(ctxVal, time.Second * 2)
+		ctxTime, cancel := context.WithTimeout(ctxVal, time.Second*2)
 
 		line := scanner.Text()
 		ans, err := s.com.HandleQuery(ctxTime, line)
@@ -105,7 +108,7 @@ func (s *ServerTCP) handleConnection(ctx context.Context, conn net.Conn) {
 
 	if err := scanner.Err(); err != nil {
 		if errors.Is(err, bufio.ErrTooLong) {
-			s.logger.Warn("Client exceeded the limit of Message", 
+			s.logger.Warn("Client exceeded the limit of Message",
 				zap.String("client", conn.RemoteAddr().String()),
 				zap.Int("limit_bytes", s.maxMessageSize))
 			conn.Write([]byte("ERROR: Message too large\n"))
@@ -114,6 +117,3 @@ func (s *ServerTCP) handleConnection(ctx context.Context, conn net.Conn) {
 		}
 	}
 }
-
-
-

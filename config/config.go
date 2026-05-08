@@ -4,18 +4,19 @@ import (
 	"errors"
 	"log"
 	"os"
-	"time"
-	"unicode"
 	"strconv"
 	"strings"
+	"time"
+	"unicode"
+
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
 	Engine    EngineConfig  `yaml:"engine"`
 	TCPServer ServerConfig  `yaml:"network"`
-	Logging   LoggingConfig `yaml:"logging"` 
-	WAL 	  WalConfig 	`yaml:"wal"`
+	Logging   LoggingConfig `yaml:"logging"`
+	WAL       WalConfig     `yaml:"wal"`
 }
 
 type EngineConfig struct {
@@ -26,22 +27,21 @@ type ServerConfig struct {
 	Address        string        `yaml:"address" env-default:"127.0.0.1:3223"`
 	MaxConnections int           `yaml:"max_connections" env-default:"100"`
 	MaxMessageSize string        `yaml:"max_message_size" env-default:"4KB"`
-	IdleTimeout    time.Duration `yaml:"idle_timeout" env-default:"5m"` 
+	IdleTimeout    time.Duration `yaml:"idle_timeout" env-default:"5m"`
 }
 
 type LoggingConfig struct {
 	Level  string `yaml:"level" env-default:"info"`
-	Output string `yaml:"output" env-default:"./log/output.log"` 
+	Output string `yaml:"output" env-default:"./log/output.log"`
 }
 
 type WalConfig struct {
-	TurnOn bool `yaml:"turn_on" env-default:false`
-	FlushingBatchSize int `yaml:"flushing_batch_size" env-default:"100"`
+	TurnOn               bool          `yaml:"turn_on" env-default:"false"`
+	FlushingBatchSize    int           `yaml:"flushing_batch_size" env-default:"100"`
 	FlushingBatchTimeout time.Duration `yaml:"flushing_batch_timeout" env-default:"10ms"`
-	MaxSegmentSize string `yaml:"max_segment_size" env-default:"10MB"`
-	Directory string `yaml:"data_directory" env-default:"./data/wal"`
+	MaxSegmentSize       string        `yaml:"max_segment_size" env-default:"10MB"`
+	Directory            string        `yaml:"data_directory" env-default:"./data/wal"`
 }
-
 
 func LoadConfig() *Config {
 	configPath := os.Getenv("CONFIG_PATH")
@@ -63,16 +63,12 @@ func LoadConfig() *Config {
 		log.Fatalf("Error checking config file: %v", err)
 	}
 
-	
-	
-	
 	if err := cleanenv.ReadConfig(configPath, &cnf); err != nil {
-		log.Fatalf("Error reading config: %v", err) 
+		log.Fatalf("Error reading config: %v", err)
 	}
 
 	return &cnf
 }
-
 
 func PasreSize(sizeConf string) (int, error) {
 	var size string
