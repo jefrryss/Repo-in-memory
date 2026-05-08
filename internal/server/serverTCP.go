@@ -4,9 +4,11 @@ import (
 	"bufio"
 	"context"
 	"errors"
+	"fmt"
 	"in-memory/config"
 	"in-memory/internal/compute"
 	"net"
+	"sync"
 	"time"
 
 	"go.uber.org/zap"
@@ -20,6 +22,9 @@ type ServerTCP struct {
 	maxMessageSize int
 	addres         string
 	timeout        time.Duration
+
+	listener net.Listener
+	wg       sync.WaitGroup
 }
 
 func NewServerTSP(cnf *config.ServerConfig, c *compute.Compute, l *zap.Logger) *ServerTCP {
@@ -42,7 +47,9 @@ func (s *ServerTCP) StartServer() {
 	if err != nil {
 		s.logger.Fatal("Error with starting server", zap.Error(err))
 	}
+	s.listener = listener
 	defer listener.Close()
+	fmt.Println("Server started")
 	s.logger.Info("TCP server started", zap.String("address", s.addres))
 
 	semaphore := make(chan struct{}, s.maxConnections)
@@ -52,9 +59,11 @@ func (s *ServerTCP) StartServer() {
 		if err != nil {
 			continue
 		}
+		s.wg.Add(1)
 		go func(c net.Conn) {
 
 			defer func() {
+				s.wg.Done()
 				if r := recover(); r != nil {
 					s.logger.Error("Recovered from panic in client goroutine",
 						zap.Any("panic_info", r),
@@ -62,6 +71,7 @@ func (s *ServerTCP) StartServer() {
 					)
 				}
 				<-semaphore
+
 			}()
 
 			select {
@@ -116,4 +126,26 @@ func (s *ServerTCP) handleConnection(ctx context.Context, conn net.Conn) {
 			s.logger.Error("Error reading conecction", zap.Error(err))
 		}
 	}
+}
+
+func (s *ServerTCP) ShutDown(ctx context.Context) error {
+	s.logger.Info("Shutting down server gracefully...")
+
+	if s.listener != nil {
+		s.listener.Close()
+	}
+	done := make(chan struct{})
+	defer func() {
+		s.wg.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		s.logger.Info("All clients disconnected successfully")
+		return nil
+	case <-ctx.Done():
+		return errors.New("timeout exceeded, forcing shutdown")
+	}
+
 }
